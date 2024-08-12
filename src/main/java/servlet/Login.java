@@ -15,31 +15,37 @@ import model.User;
 @WebServlet("/Login")
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		//リクエストパラメータ取得
 		request.setCharacterEncoding("UTF-8");
 		String name = request.getParameter("name");
 		String pass = request.getParameter("pass");
-		
-		//Userインスタンス(ユーザー情報)の生成
-		User user = new User(name, pass); 
-		
-		//ログイン処理
-		LoginLogic loginLogic = new LoginLogic();
-		boolean isLogin = loginLogic.execute(user);
-		
-		//ログイン成功時
-		if (isLogin) {
-			
-			//ユーザー情報をセッションスコープに保存
-			HttpSession session = request.getSession();
-			session.setAttribute("loginUser", user);
+
+		if ((name != null && name.length() != 0) && (pass != null && pass.length() != 0)) {
+			//入力値でUserインスタンスの生成
+			User user = new User(name, pass);
+			LoginLogic loginLogic = new LoginLogic();
+			//DBに存在するかチェック（パスワードチェック込み）
+			User findUser = loginLogic.find(user);
+
+			//ログイン処理
+			if (findUser != null) {
+
+				//ユーザー情報をセッションスコープに保存
+				HttpSession session = request.getSession();
+				session.setAttribute("loginUser", findUser);
+			} else {
+				request.setAttribute("errorMsg", "パスワードが間違っているか、ユーザーが未登録です。");
+			}
+		} else {
+			//どちらも入力されていなければ、エラーメッセージ出力
+			request.setAttribute("errorMsg", "必要項目が未入力です。");
 		}
+		
 		//ログイン結果画面にフォワード
-		RequestDispatcher dispatcher =
-				request.getRequestDispatcher("WEB-INF/jsp/loginResult.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/loginResult.jsp");
 		dispatcher.forward(request, response);
 	}
-		
 }

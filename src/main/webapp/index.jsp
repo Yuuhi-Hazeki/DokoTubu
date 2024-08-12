@@ -13,7 +13,7 @@
 	パスワード：<input type="password" name="pass"><br>
 	<input type="submit" value="ログイン">
 </form>
-
-<a href="registerView.jsp">ユーザー新規登録</a>
+<br>
+<a href="Register">ユーザー新規登録</a>
 </body>
 </html>

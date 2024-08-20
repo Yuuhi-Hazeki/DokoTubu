@@ -23,6 +23,13 @@ String errorMsg = (String)request.getAttribute("errorMsg");
 	<p>
 		<a href="Main">更新</a>
 	</p>
+	
+	<form action="SearchMutter" method="post">
+	<input type="text" name="search">
+	<input type="submit" value="検索">
+	</form>
+	<br>
+	
 	<form action="Main" method="post">
 		<input type="text" name="text"> <input type="submit"
 			value="つぶやく">

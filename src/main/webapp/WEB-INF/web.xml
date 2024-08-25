@@ -39,4 +39,10 @@
     <servlet-name>SeachMutterLogic</servlet-name>
     <servlet-class>model.SeachMutterLogic</servlet-class>
   </servlet>
+  <servlet>
+    <description></description>
+    <display-name>UpdateMutter</display-name>
+    <servlet-name>UpdateMutter</servlet-name>
+    <servlet-class>servlet.UpdateMutter</servlet-class>
+  </servlet>
 </web-app>

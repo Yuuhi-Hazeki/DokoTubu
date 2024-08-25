@@ -82,39 +82,66 @@ public class MuttersDAO {
 	public List<Mutter> search(String keyword) {
 		List<Mutter> mutterList = new ArrayList<Mutter>();
 		// JDBCドライバを読み込む
-				try {
-				    Class.forName("org.h2.Driver");
-				} catch (ClassNotFoundException e) {
-				    throw new IllegalStateException("JDBCドライバを読み込めませんでした");
-				}
-				
-				// データベース接続
-				try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
+		try {
+			Class.forName("org.h2.Driver");
+		} catch (ClassNotFoundException e) {
+			throw new IllegalStateException("JDBCドライバを読み込めませんでした");
+		}
 
-					// SELECT文の準備
-					String sql = "SELECT M.ID, U.NAME, M.TEXT "
-							+ "FROM MUTTERS M "
-							+ "JOIN USERS U ON M.USER_ID = U.ID "
-							+ "WHERE M.TEXT LIKE ? "
-							+ "ORDER BY M.ID DESC";
-							
-					PreparedStatement pStmt = conn.prepareStatement(sql);
-					pStmt.setString(1, "%" + keyword + "%"); //%test%
-					
-					ResultSet rs = pStmt.executeQuery();
-					
-					while(rs.next()) {
-						int id=rs.getInt("ID");
-						String userName= rs.getString("NAME");
-						String text =rs.getString("TEXT");
-						Mutter mutter = new Mutter(id, userName, text);
-						mutterList.add(mutter);
-					}
-				} catch (SQLException e){
-					e.printStackTrace();
-						
-				}
-					
+		// データベース接続
+		try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
+
+			// SELECT文の準備
+			String sql = "SELECT M.ID, U.NAME, M.TEXT "
+					+ "FROM MUTTERS M "
+					+ "JOIN USERS U ON M.USER_ID = U.ID "
+					+ "WHERE M.TEXT LIKE ? "
+					+ "ORDER BY M.ID DESC";
+
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, "%" + keyword + "%"); //%test%
+
+			ResultSet rs = pStmt.executeQuery();
+
+			while (rs.next()) {
+				int id = rs.getInt("ID");
+				String userName = rs.getString("NAME");
+				String text = rs.getString("TEXT");
+				Mutter mutter = new Mutter(id, userName, text);
+				mutterList.add(mutter);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+
 		return mutterList;
+	}
+
+	public boolean update(int id, String text) {
+		try {
+			Class.forName("org.h2.Driver");
+		} catch (ClassNotFoundException e) {
+			throw new IllegalStateException("JDBCドライバが読み込めませんでした");
+		}
+		//データベース接続
+		try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
+
+			String sql = "UPDATE MUTTERS SET TEXT = ? WHERE ID = ?";
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+
+			//「？」に使用する値を設定してSQL文を完成
+			pStmt.setString(1, text);
+			pStmt.setInt(2, id);
+			int result = pStmt.executeUpdate();
+			if (result != 1) {
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("更新失敗");
+			return false;
+		}
+		return true;
 	}
 }

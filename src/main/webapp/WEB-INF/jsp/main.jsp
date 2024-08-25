@@ -39,7 +39,12 @@ String errorMsg = (String)request.getAttribute("errorMsg");
 	<p><%= errorMsg %></p>
 	<% } %>
 	<% for (Mutter mutter : mutterList) {%>
-	<p><%= mutter.getUserName() %>:<%= mutter.getText() %></p>
+	<%= mutter.getUserName() %>:<%= mutter.getText() %>
+	<form action="UpdateMutter" method="get">
+	<input type="hidden" name="id" value="<%= mutter.getId()%>">
+	<input type="submit" value="編集">
+	</form>
 	<% } %>
+
 </body>
 </html>
